@@ -1,0 +1,48 @@
+<idea-plugin version="2">
+    <id>com.github.tinselspoon.intellij.kubernetes</id>
+    <name>Kubernetes Resource Support</name>
+    <version>0.1</version>
+    <vendor url="https://github.com/tinselspoon">Nick Tinsley</vendor>
+
+    <idea-version since-build="162" />
+
+    <description><![CDATA[
+      Provides assistance for editing YAML files containing Kubernetes resources.
+      <p>
+      YAML files are auto-detected - add in a "kind" or "apiVersion" element at the top level and the completion will be activated.
+      <h3>Features</h3>
+      <ul>
+        <li>Auto-completion of properties within resources.</li>
+        <li>Popup documentation of properties.</li>
+        <li>Inspections to detect and fix invalid, duplicated, and missing required properties.</li>
+        <li>Supports Kubernetes 1.5 top-level resources.</li>
+      </ul>
+      <h3>Current Limitations</h3>
+      <ul>
+        <li>Only YAML files are supported; no JSON support.</li>
+        <li>No support for older Kubernetes resource versions (i.e. pre v1.5).</li>
+      </ul>
+    ]]></description>
+
+    <change-notes><![CDATA[
+      0.1: First release.
+    ]]>
+    </change-notes>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="com.github.tinselspoon.intellij.kubernetes.KubernetesFileTypeFactory"/>
+        <completion.contributor language="yaml" implementationClass="com.github.tinselspoon.intellij.kubernetes.KubernetesYamlCompletionContributor"/>
+        <documentationProvider implementation="com.github.tinselspoon.intellij.kubernetes.KubernetesYamlDocumentationProvider"/>
+        <annotator implementationClass="com.github.tinselspoon.intellij.kubernetes.codeInsight.DuplicateKeyAnnotator" language="yaml"/>
+        <annotator implementationClass="com.github.tinselspoon.intellij.kubernetes.codeInsight.MissingRequiredPropertiesAnnotator" language="yaml"/>
+        <annotator implementationClass="com.github.tinselspoon.intellij.kubernetes.codeInsight.DataTypeCheckerAnnotator" language="yaml"/>
+        <annotator implementationClass="com.github.tinselspoon.intellij.kubernetes.codeInsight.PropertyNotInModelAnnotator" language="yaml"/>
+    </extensions>
+
+    <actions>
+    </actions>
+
+</idea-plugin>
