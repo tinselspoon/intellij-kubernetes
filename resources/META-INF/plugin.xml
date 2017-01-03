@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.github.tinselspoon.intellij.kubernetes</id>
     <name>Kubernetes Resource Support</name>
-    <version>0.1</version>
+    <version>0.2</version>
     <vendor url="https://github.com/tinselspoon">Nick Tinsley</vendor>
 
     <idea-version since-build="162" />
@@ -25,7 +25,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      0.1: First release.
+      0.2:
+      <ul>
+        <li>Fix issue with invalid virtual files.</li>
+        <li>Add a newline and indentation when committing completion for an object or array property.</li>
+      </ul>
     ]]>
     </change-notes>
 
