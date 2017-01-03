@@ -27,7 +27,7 @@ public class KubernetesYamlFileType extends LanguageFileType implements FileType
     private static final int BYTES_TO_READ = 4096;
 
     /** Singleton instance. */
-    public static KubernetesYamlFileType INSTANCE = new KubernetesYamlFileType();
+    public static final KubernetesYamlFileType INSTANCE = new KubernetesYamlFileType();
 
     /** Identifier to use for the recursion guard. */
     private static final String GUARD_ID = "KubernetesYamlFileType";
@@ -67,21 +67,23 @@ public class KubernetesYamlFileType extends LanguageFileType implements FileType
     @SuppressWarnings("ConstantConditions")
     @Override
     public boolean isMyFileType(@NotNull final VirtualFile file) {
-        final String extension = file.getExtension();
-        if ("yml".equalsIgnoreCase(extension) || "yaml".equalsIgnoreCase(extension)) {
-            return recursionGuard.doPreventingRecursion(GUARD_ID, false, () -> {
-                if (file instanceof StubVirtualFile) {
-                    return true; // Helps New -> File get correct file type
-                }
+        if (file.isValid()) {
+            final String extension = file.getExtension();
+            if ("yml".equalsIgnoreCase(extension) || "yaml".equalsIgnoreCase(extension)) {
+                return recursionGuard.doPreventingRecursion(GUARD_ID, false, () -> {
+                    if (file instanceof StubVirtualFile) {
+                        return true; // Helps New -> File get correct file type
+                    }
 
-                try (InputStream inputStream = file.getInputStream()) {
-                    final byte[] bytes = new byte[BYTES_TO_READ];
-                    final int n = inputStream.read(bytes, 0, BYTES_TO_READ);
-                    return n > 0 && isKubernetesYaml(bytes);
-                } catch (final IOException e) {
-                    return false; // todo log
-                }
-            });
+                    try (InputStream inputStream = file.getInputStream()) {
+                        final byte[] bytes = new byte[BYTES_TO_READ];
+                        final int n = inputStream.read(bytes, 0, BYTES_TO_READ);
+                        return n > 0 && isKubernetesYaml(bytes);
+                    } catch (final IOException e) {
+                        return false; // todo log
+                    }
+                });
+            }
         }
         return false;
     }

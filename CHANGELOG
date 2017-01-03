@@ -1,2 +1,6 @@
+0.2
+Fix issue with invalid virtual files
+Add a newline and indentation when committing completion for an object or array property
+
 0.1
 First release

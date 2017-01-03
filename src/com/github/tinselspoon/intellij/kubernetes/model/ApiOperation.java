@@ -3,7 +3,7 @@ package com.github.tinselspoon.intellij.kubernetes.model;
 /**
  * Defines an operation that may be invoked on an API.
  */
-public class ApiOperation {
+class ApiOperation {
 
     /** The HTTP method required to invoke this API. */
     private String method;

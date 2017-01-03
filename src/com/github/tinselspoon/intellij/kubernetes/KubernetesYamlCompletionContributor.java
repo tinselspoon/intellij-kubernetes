@@ -24,9 +24,13 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons.Json;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
@@ -44,7 +48,7 @@ public class KubernetesYamlCompletionContributor extends CompletionContributor {
     /**
      * Adds suggestions for possible items to insert under the value of a given {@link YAMLKeyValue}.
      *
-     * @param modelProvider the
+     * @param modelProvider the store for model info.
      * @param resultSet the result set to append suggestions to.
      * @param resourceKey the identifier of the resource in question.
      * @param keyValue the {@link YAMLKeyValue} to obtain suggestions for.
@@ -68,18 +72,34 @@ public class KubernetesYamlCompletionContributor extends CompletionContributor {
      * Create a {@link LookupElementBuilder} for completing the text of a key. Do not use when completing a value.
      *
      * @param completionObject the object to pass to {@link LookupElementBuilder#create(Object)}.
+     * @param addLayerOfNesting whether a newline and indent should be added when accepting the completed value - this is used when inserting the value will introduce a level of nesting (i.e. for an
+     * object or array type).
      * @return the created {@code LookupElementBuilder}.
      */
-    private static LookupElementBuilder createKeyLookupElement(@NotNull final Object completionObject) {
+    private static LookupElementBuilder createKeyLookupElement(@NotNull final Object completionObject, final boolean addLayerOfNesting) {
         return LookupElementBuilder.create(completionObject).withInsertHandler((insertionContext, lookupElement) -> {
             // If the caret is at the end of the line, add in the property colon when completing
-            if (insertionContext.getCompletionChar() != ':') {
+            if (insertionContext.getCompletionChar() != ':' && insertionContext.getCompletionChar() != ' ') {
                 final Editor editor = insertionContext.getEditor();
                 final int offset = editor.getCaretModel().getOffset();
                 final int lineNumber = editor.getDocument().getLineNumber(offset);
                 final int lineEndOffset = editor.getDocument().getLineEndOffset(lineNumber);
                 if (lineEndOffset == offset) {
-                    EditorModificationUtil.insertStringAtCaret(editor, ": ");
+                    final String autocompleteString;
+                    if (addLayerOfNesting) {
+                        // Copy the indentation characters present on this line, and add one additional level of indentation
+                        final int lineStartOffset = editor.getDocument().getLineStartOffset(lineNumber);
+                        final String lineContent = editor.getDocument().getText().substring(lineStartOffset, lineEndOffset);
+                        final int offsetOfContent = lineContent.length() - StringUtil.trimLeading(lineContent).length();
+                        final String indentToLine = lineContent.substring(0, offsetOfContent);
+                        final CodeStyleSettings currentSettings = CodeStyleSettingsManager.getSettings(insertionContext.getProject());
+                        final CommonCodeStyleSettings.IndentOptions indentOptions = currentSettings.getIndentOptions(insertionContext.getFile().getFileType());
+                        final String additionalIndent = indentOptions.USE_TAB_CHARACTER ? "\t" : StringUtil.repeatSymbol(' ', indentOptions.INDENT_SIZE);
+                        autocompleteString = ": \n" + indentToLine + additionalIndent;
+                    } else {
+                        autocompleteString = ": ";
+                    }
+                    EditorModificationUtil.insertStringAtCaret(editor, autocompleteString);
                 }
             }
         });
@@ -96,12 +116,15 @@ public class KubernetesYamlCompletionContributor extends CompletionContributor {
     private static LookupElementBuilder createKeyLookupElement(@NotNull final String propertyName, @NotNull final Property propertySpec) {
         final String typeText = ModelUtil.typeStringFor(propertySpec);
         Icon icon = PlatformIcons.PROPERTY_ICON;
+        boolean addLayerOfNesting = false;
         if (propertySpec.getType() == FieldType.ARRAY) {
             icon = Json.Array;
+            addLayerOfNesting = true;
         } else if (propertySpec.getRef() != null || propertySpec.getType() == FieldType.OBJECT) {
             icon = Json.Object;
+            addLayerOfNesting = true;
         }
-        return createKeyLookupElement(new PropertyCompletionItem(propertyName, propertySpec)).withTypeText(typeText, true).withIcon(icon);
+        return createKeyLookupElement(new PropertyCompletionItem(propertyName, propertySpec), addLayerOfNesting).withTypeText(typeText, true).withIcon(icon);
     }
 
     /**
@@ -136,8 +159,8 @@ public class KubernetesYamlCompletionContributor extends CompletionContributor {
             if (keyValue == null) {
                 if (resourceKey == null) {
                     // If we don't know what the resource type is, add the "apiVersion" and "kind" fields which will be applicable to all resources
-                    resultSet.addElement(LookupElementBuilder.create("apiVersion"));
-                    resultSet.addElement(LookupElementBuilder.create("kind"));
+                    resultSet.addElement(createKeyLookupElement("apiVersion", false));
+                    resultSet.addElement(createKeyLookupElement("kind", false));
                 } else {
                     // If we do know the resource type, add the fields relevant to that resource
                     modelProvider.findProperties(resourceKey, Collections.emptyList()).entrySet().forEach(p -> resultSet.addElement(createKeyLookupElement(p.getKey(), p.getValue())));

@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Defines an API, which is a set of several operations on a particular object.
  */
-public class Api {
+class Api {
 
     /** Descriptions of the operations possible on this API. */
     private final List<ApiOperation> operations = new ArrayList<>();
