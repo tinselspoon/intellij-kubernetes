@@ -67,13 +67,14 @@ public class KubernetesYamlFileType extends LanguageFileType implements FileType
     @SuppressWarnings("ConstantConditions")
     @Override
     public boolean isMyFileType(@NotNull final VirtualFile file) {
+        if (file instanceof StubVirtualFile) {
+            return false; // Helps New -> File get correct file type
+        }
+
         if (file.isValid()) {
             final String extension = file.getExtension();
             if ("yml".equalsIgnoreCase(extension) || "yaml".equalsIgnoreCase(extension)) {
                 return recursionGuard.doPreventingRecursion(GUARD_ID, false, () -> {
-                    if (file instanceof StubVirtualFile) {
-                        return true; // Helps New -> File get correct file type
-                    }
 
                     try (InputStream inputStream = file.getInputStream()) {
                         final byte[] bytes = new byte[BYTES_TO_READ];
