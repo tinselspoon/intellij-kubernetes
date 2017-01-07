@@ -1,0 +1,3 @@
+kind: Pod
+apiVersion: v1
+<caret>

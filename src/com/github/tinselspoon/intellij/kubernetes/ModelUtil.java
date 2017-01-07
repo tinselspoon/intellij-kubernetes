@@ -9,7 +9,7 @@ import com.github.tinselspoon.intellij.kubernetes.model.Property;
 /**
  * Utilities for working with model classes.
  */
-public final class ModelUtil {
+final class ModelUtil {
 
     /** Static class private constructor. */
     private ModelUtil() {
@@ -25,7 +25,7 @@ public final class ModelUtil {
      * @return the type string.
      */
     @NotNull
-    public static String typeStringFor(@NotNull final Property propertySpec) {
+    static String typeStringFor(@NotNull final Property propertySpec) {
         final String typeText;
         final ArrayItems items = propertySpec.getItems();
         if (propertySpec.getType() == FieldType.ARRAY && items != null) {

@@ -1,0 +1,14 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: rc
+spec:
+  replicas: 2
+  selector:
+    <error descr="The content of selector should be an object.">- not: an array</error>
+  template:
+    spec:
+      serviceAccountName: serviceaccount
+      containers:
+        <error descr="The content of containers should be an array.">name: container1
+        image: busybox</error>

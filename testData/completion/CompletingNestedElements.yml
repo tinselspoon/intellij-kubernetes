@@ -1,0 +1,4 @@
+kind: PersistentVolume
+apiVersion: v1
+status:
+  <caret>

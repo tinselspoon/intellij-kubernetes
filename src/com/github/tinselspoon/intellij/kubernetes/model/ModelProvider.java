@@ -44,7 +44,7 @@ public class ModelProvider {
      */
     @Nullable
     public Model findModel(final ResourceTypeKey resourceTypeKey, final List<String> path) {
-        final SwaggerSpec spec = getSpec(resourceTypeKey.getApiVersion());
+        final SwaggerSpec spec = getSpec(resourceTypeKey);
         final String search = modelIdFromResourceKey(resourceTypeKey);
         if (spec != null) {
             Model model = spec.getModels().get(search);
@@ -79,7 +79,7 @@ public class ModelProvider {
      */
     @NotNull
     public Map<String, Property> findProperties(final ResourceTypeKey resourceTypeKey, final List<String> path) {
-        final SwaggerSpec spec = getSpec(resourceTypeKey.getApiVersion());
+        final SwaggerSpec spec = getSpec(resourceTypeKey);
         if (spec != null) {
             return findProperties(spec, resourceTypeKey, path);
         }
@@ -190,14 +190,16 @@ public class ModelProvider {
     }
 
     /**
-     * Gets the {@link SwaggerSpec} that describes the given API version.
+     * Gets the {@link SwaggerSpec} that contains a definition for the given resource key.
      *
-     * @param apiVersion the API version to search for.
+     * @param resourceTypeKey the resource key to search for.
      * @return the corresponding spec, or {@code null} if one cannot be found.
      */
     @Nullable
-    private SwaggerSpec getSpec(@NotNull final String apiVersion) {
-        return getSpecs().stream().filter(s -> apiVersion.equals(s.getApiVersion())).findAny().orElse(null);
+    private SwaggerSpec getSpec(@NotNull final ResourceTypeKey resourceTypeKey) {
+        final String apiVersion = resourceTypeKey.getApiVersion();
+        final String modelId = modelIdFromResourceKey(resourceTypeKey);
+        return getSpecs().stream().filter(s -> apiVersion.equals(s.getApiVersion()) && s.getModels().containsKey(modelId)).findAny().orElse(null);
     }
 
     /**

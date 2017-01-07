@@ -95,7 +95,7 @@ public class KubernetesYamlCompletionContributor extends CompletionContributor {
                         final CodeStyleSettings currentSettings = CodeStyleSettingsManager.getSettings(insertionContext.getProject());
                         final CommonCodeStyleSettings.IndentOptions indentOptions = currentSettings.getIndentOptions(insertionContext.getFile().getFileType());
                         final String additionalIndent = indentOptions.USE_TAB_CHARACTER ? "\t" : StringUtil.repeatSymbol(' ', indentOptions.INDENT_SIZE);
-                        autocompleteString = ": \n" + indentToLine + additionalIndent;
+                        autocompleteString = ":\n" + indentToLine + additionalIndent;
                     } else {
                         autocompleteString = ": ";
                     }
@@ -176,12 +176,13 @@ public class KubernetesYamlCompletionContributor extends CompletionContributor {
                         final String apiVersion = KubernetesYamlPsiUtil.getValueText(topLevelMapping, "apiVersion");
                         for (final ResourceTypeKey kind : modelProvider.suggestKinds(apiVersion)) {
                             final String kindApiVersion = kind.getApiVersion();
+                            // Add on the apiVersion
                             resultSet.addElement(LookupElementBuilder.create(kind.getKind())
                                                                      .withTypeText(kindApiVersion, true)
                                                                      .withIcon(PlatformIcons.CLASS_ICON)
                                                                      .withInsertHandler((insertionContext, lookupElement) -> {
                                                                          if (topLevelMapping == null || topLevelMapping.getKeyValueByKey("apiVersion") == null) {
-                                                                             EditorModificationUtil.insertStringAtCaret(insertionContext.getEditor(), "\napiVersion: " + kindApiVersion);
+                                                                             EditorModificationUtil.insertStringAtCaret(insertionContext.getEditor(), "\napiVersion: " + kindApiVersion + "\n");
                                                                          }
                                                                      }));
                         }
