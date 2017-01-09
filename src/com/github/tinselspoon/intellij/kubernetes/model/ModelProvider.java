@@ -1,9 +1,5 @@
 package com.github.tinselspoon.intellij.kubernetes.model;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -11,14 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.github.tinselspoon.intellij.kubernetes.ResourceTypeKey;
-import com.intellij.util.ReflectionUtil;
 
 /**
  * Provides information on the schema of Kubernetes resources.
@@ -27,6 +20,8 @@ public class ModelProvider {
 
     /** Singleton instance. */
     public static final ModelProvider INSTANCE = new ModelProvider();
+
+    private final ModelLoader modelLoader = new ModelLoader();
 
     /** The specs currently loaded. */
     private List<SwaggerSpec> specs;
@@ -209,26 +204,7 @@ public class ModelProvider {
      */
     @NotNull
     private List<SwaggerSpec> getSpecs() {
-        if (specs == null) {
-            final Class<?> callerClass = ReflectionUtil.getGrandCallerClass();
-            assert callerClass != null;
-            final ClassLoader classLoader = callerClass.getClassLoader();
-            try (ZipInputStream resourceStream = new ZipInputStream(classLoader.getResourceAsStream("com/github/tinselspoon/intellij/kubernetes/1.5.zip"))) {
-                specs = new ArrayList<>();
-                ZipEntry entry;
-                while ((entry = resourceStream.getNextEntry()) != null) {
-                    if (entry.getName().endsWith("json")) {
-                        final SwaggerSpec parsedSpec = SwaggerSpec.loadFrom(new InputStreamReader(resourceStream, StandardCharsets.UTF_8));
-                        if (parsedSpec != null) {
-                            getSpecs().add(parsedSpec);
-                        }
-                    }
-                }
-            } catch (final IOException e) {
-                throw new RuntimeException("Error reading Swagger resource.", e);
-            }
-        }
-        return specs;
+        return modelLoader.getActiveSpecs();
     }
 
     /**

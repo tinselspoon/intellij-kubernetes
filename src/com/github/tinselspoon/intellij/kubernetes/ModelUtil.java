@@ -1,5 +1,7 @@
 package com.github.tinselspoon.intellij.kubernetes;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.github.tinselspoon.intellij.kubernetes.model.ArrayItems;
@@ -29,9 +31,9 @@ final class ModelUtil {
         final String typeText;
         final ArrayItems items = propertySpec.getItems();
         if (propertySpec.getType() == FieldType.ARRAY && items != null) {
-            typeText = (items.getRef() == null ? items.getType().toString() : items.getRef()) + "[]";
+            typeText = (items.getRef() == null ? Objects.toString(items.getType(), "unknwon") : items.getRef()) + "[]";
         } else {
-            typeText = propertySpec.getRef() == null ? propertySpec.getType().toString() : propertySpec.getRef();
+            typeText = propertySpec.getRef() == null ? Objects.toString(propertySpec.getType(), "unknown") : propertySpec.getRef();
         }
         return typeText;
     }
