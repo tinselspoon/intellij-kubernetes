@@ -10,7 +10,9 @@
       Provides assistance for editing YAML files containing Kubernetes resources. Optionally adds support for OpenShift resources in addition to native Kubernetes resources.
       <p>
       <h3>Usage</h3>
-      YAML files are auto-detected - add in a "kind" or "apiVersion" element at the top level and the completion will be activated. To add OpenShift completion or change the version of Kubernetes in use, go to <strong>Settings > Languages > Kubernetes and OpenShift</strong>.
+      YAML files are auto-detected - add in a "kind" or "apiVersion" element at the top level and the completion will be activated.
+      <p>
+      <strong>OpenShift completion is optional and disabled by default.</strong> To add OpenShift completion or change the version of Kubernetes in use, go to <strong>Settings > Languages > Kubernetes and OpenShift</strong>.
       <h3>Features</h3>
       <ul>
         <li>Auto-completion of properties within resources.</li>
