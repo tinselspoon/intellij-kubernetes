@@ -69,6 +69,7 @@ public class KubernetesConfigurable implements Configurable {
         enableKubernetesCompletion.addActionListener(e -> updateEnabled());
         enableOpenshiftCompletion.addActionListener(e -> updateEnabled());
         kubernetesVersions.addItem(LATEST_API_VERSION_ITEM);
+        kubernetesVersions.addItem("1.6");
         kubernetesVersions.addItem("1.5");
         kubernetesVersions.addItem("1.4");
         kubernetesVersions.addItem("1.3");
