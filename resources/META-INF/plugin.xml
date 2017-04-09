@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.github.tinselspoon.intellij.kubernetes</id>
     <name>Kubernetes and OpenShift Resource Support</name>
-    <version>0.5</version>
+    <version>0.6</version>
     <vendor url="https://github.com/tinselspoon">Nick Tinsley</vendor>
 
     <idea-version since-build="162" />
@@ -27,9 +27,9 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      0.5:
+      0.6:
       <ul>
-        <li>Added support for Kubernetes 1.6. Please note if you are using "latest API version" (the default) this will now be the version used for completion.</li>
+        <li>Ensure the latest available apiVersion is automatically inserted when completing the kind field.</li>
       </ul>
     ]]>
     </change-notes>

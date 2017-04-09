@@ -1,6 +1,7 @@
 package com.github.tinselspoon.intellij.kubernetes.model;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +106,10 @@ public class ModelProvider {
             applicableSpecs = getSpecs().stream().filter(s -> apiVersion.equals(s.getApiVersion()));
         }
 
+        // Make a map of kinds to apiVersions - this is not the final data structure we want but is helpful for when we preserve only the most recent API version for a particular kind
+        // TODO This does assume that no two API groups will declare the same kind - currently this doesn't happen but the Kubernetes API structure does allow for it
+        Map<String, String> typeKeys = new HashMap<>();
         // Suggest any resource that appears as a return type from an API request
-        final Set<ResourceTypeKey> typeKeys = new HashSet<>();
         applicableSpecs.forEach(s -> {
             final Set<String> apiTypes = new HashSet<>();
             final Set<String> models = new HashSet<>();
@@ -123,9 +126,15 @@ public class ModelProvider {
             }
             // Make sure all API types have an associated model, otherwise there isn't much point in suggesting them as we can't offer anything useful
             apiTypes.retainAll(models);
-            apiTypes.stream().map(t -> new ResourceTypeKey(s.getApiVersion(), stripModelIdPrefix(t))).forEach(typeKeys::add);
+            for (final String apiType : apiTypes) {
+                String kind = stripModelIdPrefix(apiType);
+                // Only keep the "highest" API version for a kind to ensure we are using the latest version available
+                typeKeys.merge(kind, s.getApiVersion(), (a, b) -> ApiVersionComparator.INSTANCE.compare(a, b) > 0 ? a : b);
+            }
         });
-        return typeKeys;
+
+        // Convert map of type keys to ResourceTypeKey objects
+        return typeKeys.entrySet().stream().map(e -> new ResourceTypeKey(e.getValue(), e.getKey())).collect(Collectors.toSet());
     }
 
     /**
