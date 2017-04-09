@@ -75,6 +75,7 @@ public class KubernetesConfigurable implements Configurable {
         kubernetesVersions.addItem("1.3");
         kubernetesVersions.addItem("1.2");
         openshiftVersions.addItem(LATEST_API_VERSION_ITEM);
+        openshiftVersions.addItem("1.5");
         openshiftVersions.addItem("1.4");
         openshiftVersions.addItem("1.3");
         openshiftVersions.addItem("1.2");

@@ -29,7 +29,7 @@ class ModelLoader {
     private static final String DEFAULT_KUBERNETES_VERSION = "1.6";
 
     /** The version of OpenShift specs to include if no version is specified. */
-    private static final String DEFAULT_OPENSHIFT_VERSION = "1.4";
+    private static final String DEFAULT_OPENSHIFT_VERSION = "1.5";
 
     /** Cached specs that have already been parsed from a zip file. */
     private final Map<String, List<SwaggerSpec>> cachedSpecs = new HashMap<>();

@@ -30,6 +30,7 @@
       0.6:
       <ul>
         <li>Ensure the latest available apiVersion is automatically inserted when completing the kind field.</li>
+        <li>Add support for OpenShift 1.5. Please note if you are using "latest API version" (the default) this will now be the version used for completion.</li>
       </ul>
     ]]>
     </change-notes>
