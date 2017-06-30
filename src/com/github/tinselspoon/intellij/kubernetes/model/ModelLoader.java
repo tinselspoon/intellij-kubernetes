@@ -26,7 +26,7 @@ import com.intellij.util.ReflectionUtil;
 class ModelLoader {
 
     /** The version of Kubernetes specs to include if no version is specified. */
-    private static final String DEFAULT_KUBERNETES_VERSION = "1.6";
+    private static final String DEFAULT_KUBERNETES_VERSION = "1.7";
 
     /** The version of OpenShift specs to include if no version is specified. */
     private static final String DEFAULT_OPENSHIFT_VERSION = "1.5";
