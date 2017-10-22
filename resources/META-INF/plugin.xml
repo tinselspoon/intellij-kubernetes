@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.github.tinselspoon.intellij.kubernetes</id>
     <name>Kubernetes and OpenShift Resource Support</name>
-    <version>0.7</version>
+    <version>0.8</version>
     <vendor url="https://github.com/tinselspoon">Nick Tinsley</vendor>
 
     <idea-version since-build="162" />
@@ -18,7 +18,7 @@
         <li>Auto-completion of properties within resources.</li>
         <li>Popup documentation of properties.</li>
         <li>Inspections to detect and fix invalid, duplicated, and missing required properties.</li>
-        <li>Supports Kubernetes 1.2 to 1.7 top-level resources.</li>
+        <li>Supports Kubernetes 1.2 to 1.8 top-level resources.</li>
       </ul>
       <h3>Current Limitations</h3>
       <ul>
@@ -27,9 +27,9 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      0.7:
+      0.8:
       <ul>
-        <li>Add support for Kubernetes 1.7. Please note if you are using "latest API version" (the default) this will now be the version used for completion.</li>
+        <li>Add support for Kubernetes 1.8 and OpenShift 3.6. Please note if you are using "latest API version" (the default) this will now be the version used for completion.</li>
       </ul>
     ]]>
     </change-notes>

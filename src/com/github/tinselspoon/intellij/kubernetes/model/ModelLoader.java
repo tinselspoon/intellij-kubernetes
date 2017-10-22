@@ -26,10 +26,10 @@ import com.intellij.util.ReflectionUtil;
 class ModelLoader {
 
     /** The version of Kubernetes specs to include if no version is specified. */
-    private static final String DEFAULT_KUBERNETES_VERSION = "1.7";
+    private static final String DEFAULT_KUBERNETES_VERSION = "1.8";
 
     /** The version of OpenShift specs to include if no version is specified. */
-    private static final String DEFAULT_OPENSHIFT_VERSION = "1.5";
+    private static final String DEFAULT_OPENSHIFT_VERSION = "3.6";
 
     /** Cached specs that have already been parsed from a zip file. */
     private final Map<String, List<SwaggerSpec>> cachedSpecs = new HashMap<>();

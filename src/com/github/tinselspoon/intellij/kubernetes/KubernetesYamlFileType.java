@@ -10,6 +10,8 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLLanguage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
@@ -23,14 +25,17 @@ import com.intellij.openapi.vfs.newvfs.impl.StubVirtualFile;
  */
 public class KubernetesYamlFileType extends LanguageFileType implements FileTypeIdentifiableByVirtualFile {
 
-    /** Number of bytes to read when guessing for the file type based on content. */
-    private static final int BYTES_TO_READ = 4096;
-
     /** Singleton instance. */
     public static final KubernetesYamlFileType INSTANCE = new KubernetesYamlFileType();
 
+    /** Number of bytes to read when guessing for the file type based on content. */
+    private static final int BYTES_TO_READ = 4096;
+
     /** Identifier to use for the recursion guard. */
     private static final String GUARD_ID = "KubernetesYamlFileType";
+
+    /** The logger. */
+    private static final Logger logger = LoggerFactory.getLogger(KubernetesYamlFileType.class);
 
     /** Recursion guard for preventing cycles. */
     private final RecursionGuard recursionGuard = RecursionManager.createGuard(GUARD_ID);
@@ -71,22 +76,21 @@ public class KubernetesYamlFileType extends LanguageFileType implements FileType
             return false; // Helps New -> File get correct file type
         }
 
-        if (file.isValid()) {
-            final String extension = file.getExtension();
-            if ("yml".equalsIgnoreCase(extension) || "yaml".equalsIgnoreCase(extension)) {
-                return recursionGuard.doPreventingRecursion(GUARD_ID, false, () -> {
-
+        return recursionGuard.doPreventingRecursion(GUARD_ID, true, () -> {
+            if (file.isValid()) {
+                final String extension = file.getExtension();
+                if ("yml".equalsIgnoreCase(extension) || "yaml".equalsIgnoreCase(extension)) {
                     try (InputStream inputStream = file.getInputStream()) {
                         final byte[] bytes = new byte[BYTES_TO_READ];
                         final int n = inputStream.read(bytes, 0, BYTES_TO_READ);
                         return n > 0 && isKubernetesYaml(bytes);
                     } catch (final IOException e) {
-                        return false; // todo log
+                        logger.info("Error while determining file type.", e);
                     }
-                });
+                }
             }
-        }
-        return false;
+            return false;
+        });
     }
 
     /**
