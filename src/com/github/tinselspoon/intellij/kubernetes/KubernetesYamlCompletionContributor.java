@@ -163,7 +163,7 @@ public class KubernetesYamlCompletionContributor extends CompletionContributor {
                     resultSet.addElement(createKeyLookupElement("kind", false));
                 } else {
                     // If we do know the resource type, add the fields relevant to that resource
-                    modelProvider.findProperties(resourceKey, Collections.emptyList()).entrySet().forEach(p -> resultSet.addElement(createKeyLookupElement(p.getKey(), p.getValue())));
+                    modelProvider.findProperties(resourceKey, Collections.emptyList()).forEach((key, value) -> resultSet.addElement(createKeyLookupElement(key, value)));
                 }
             } else {
                 // The "apiVersion" and "kind" fields on the top level are special cases where we have to calculate the completion

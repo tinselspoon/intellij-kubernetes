@@ -45,7 +45,7 @@ public class KubernetesConfigurable implements Configurable {
     /**
      * Create an {@link ApiPackage} object from the "enable completion" and "version" UI elements.
      *
-     * @param enableCompletion the enable completiom check box.
+     * @param enableCompletion the enable completion check box.
      * @param versions the version combo box selector.
      * @return an {@code ApiPackage} configured from the UI.
      */
@@ -69,6 +69,7 @@ public class KubernetesConfigurable implements Configurable {
         enableKubernetesCompletion.addActionListener(e -> updateEnabled());
         enableOpenshiftCompletion.addActionListener(e -> updateEnabled());
         kubernetesVersions.addItem(LATEST_API_VERSION_ITEM);
+        kubernetesVersions.addItem("1.9");
         kubernetesVersions.addItem("1.8");
         kubernetesVersions.addItem("1.7");
         kubernetesVersions.addItem("1.6");
